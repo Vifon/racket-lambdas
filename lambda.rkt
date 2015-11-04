@@ -44,6 +44,7 @@
           (+ ((force f) (- n 1))
              ((force f) (- n 2)))))))
 
-((Y my-map) (lambda (x) (write x) (newline))
-            ((Y my-map) (Y fibonacci)
-                        ((Y my-range) 0 10)))
+(void
+ ((Y my-map) (lambda (x) (write x) (newline))
+             ((Y my-map) (Y fibonacci)
+                         ((Y my-range) 0 10))))
