@@ -20,21 +20,42 @@
     (cons (lambda (car cdr)
             cdr))))
 
+(define my-reverse
+  (lambda (lst)
+    ((Y (lambda (f)
+          (lambda (lst acc)
+            (if (equal? lst '())
+                acc
+                (let ([f (force f)])
+                  (f (my-cdr lst)
+                     (my-cons (my-car lst)
+                              acc)))))))
+     lst '())))
+
 (define my-map
-  (Y (lambda (f)
-       (lambda (thunk lst)
-         (if (equal? lst '())
-             '()
-             (my-cons (thunk (my-car lst))
-                      ((force f) thunk (my-cdr lst))))))))
+  (lambda (thunk lst)
+    ((Y (lambda (f)
+          (lambda (thunk lst acc)
+            (if (equal? lst '())
+                (my-reverse acc)
+                (let ([f (force f)])
+                  (f thunk
+                     (my-cdr lst)
+                     (my-cons (thunk (my-car lst))
+                              acc)))))))
+     thunk lst '())))
 
 (define my-range
-  (Y (lambda (f)
-       (lambda (start end)
-         (if (< start end)
-             (my-cons start
-                      ((force f) (+ start 1) end))
-             '())))))
+  (lambda (start end)
+    ((Y (lambda (f)
+          (lambda (start end acc)
+            (if (< start end)
+                (let ([f (force f)])
+                  (f (+ start 1) end
+                     (my-cons start
+                              acc)))
+                (my-reverse acc)))))
+     start end '())))
 
 (define fibonacci
   (Y (lambda (f)
