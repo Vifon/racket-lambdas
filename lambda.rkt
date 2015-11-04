@@ -58,12 +58,17 @@
      start end '())))
 
 (define fibonacci
-  (Y (lambda (f)
-       (lambda (n)
-         (if (<= n 1)
-             1
-             (+ ((force f) (- n 1))
-                ((force f) (- n 2))))))))
+  (lambda (n)
+    ((Y (lambda (f)
+          (lambda (n n_max n-2 n-1)
+            (if (> n n_max)
+                n-1
+                (let ([f (force f)])
+                  (f (+ n 1)
+                     n_max
+                     n-1
+                     (+ n-2 n-1)))))))
+     1 n 0 1)))
 
 (void
  (my-map (lambda (x) (write x) (newline))
